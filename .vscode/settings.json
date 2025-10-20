@@ -1,0 +1,5 @@
+{
+    "github.copilot.chat.copilotDebugCommand.enabled": false,
+    "github.copilot.inlineSuggest.enable": false,
+    "copilot.inlineSuggest.enable": false
+}

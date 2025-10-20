@@ -1,0 +1,80 @@
+/*...DRAFT PAGE... */
+/* --------------- */
+
+/*...BODY... */
+
+.grid {
+  display: grid;
+  gap: 5px;
+  align-items: center;
+  grid-template-columns: 1fr;
+  justify-content: space-evenly;
+}
+
+li{
+  list-style-type: none;
+  padding: 2px;
+}
+
+/*...TEAM LIST...*/
+.listContainer {
+  border: solid #000 2px;
+  min-height: 34rem;
+}
+
+button {
+  background-color: #eee;
+  color: #fff;
+  padding: .75rem;
+  width: 200px;
+  font-size: .9em;
+}
+
+/*...PLAYER LIST...*/
+
+button {
+  background-color: #5a8b39;
+  font-weight: 700;
+  color: #fff;
+  padding: .75rem;
+  width: 200px;
+  font-size: .9em;
+}
+
+button:hover {
+  background-color: #000;
+  color: #fff;
+  font-weight: 700;
+}
+
+#otc {
+  text-align: right;
+  border: 0;
+  margin: .5rem 1rem 0 0;
+}
+
+/* #fgm
+{
+  display: block;
+  border: solid 1px #999;
+  border-radius: 6px;
+  padding: .75rem;
+  max-width: 25rem;
+  margin: .25rem;
+} */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  padding: 10px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+th {
+  background-color: #f2f2f2;
+}
