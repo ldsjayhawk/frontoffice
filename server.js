@@ -24,7 +24,7 @@ const port = process.env.PORT || 3000;
 // Middleware
 //----------------
 
-app.get("/favicon.ico", (req, res) => res.status(204).end());
+    // app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.use(express.json());
 
@@ -116,7 +116,6 @@ app.set("layout", "./layouts/layout") // not at views root
 // );
 
 // Index route
-//app.use(static)
 app.use(express.static("public"));
 app.get("/", utilities.handleErrors(baseController.buildHome))  // how do I handle errors here? adjust utilities line 35 as needed
 
