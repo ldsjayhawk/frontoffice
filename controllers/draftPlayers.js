@@ -8,6 +8,12 @@ const getAll = async (req, res) => {
     return result.toArray();
 }
 
+const getPlayersByTeam = async (req, res) => {
+    const result = await mongodb.getDb().collection('fgm_draft_players').find(lsTeamId);
+
+    return result.toArray();
+}
+
 const getDraftPlayer = async (req, res) => {
     //#swagger.tags=['draftPlayers']
     const draftPlayerId = new ObjectId(req.params.id);
@@ -38,10 +44,10 @@ const updateDraftPlayer = async (req,res) => {
 
     const draftPlayerId = new ObjectId(req.params.id);
     const draftPlayer = {
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        position: req.body.position,
-        rank: req.body.rank,
+        // firstName: req.body.firstName,
+        // lastName: req.body.lastName,
+        // position: req.body.position,
+        // rank: req.body.rank,
         fgm_team: req.body.fgm_team
     };
 
@@ -57,4 +63,4 @@ const deleteDraftPlayer = async (req,res) => {
     return response.deletedCount
 }
 
-module.exports = {getAll, getDraftPlayer, addDraftPlayer, updateDraftPlayer, deleteDraftPlayer}
+module.exports = {getAll, getDraftPlayer, getPlayersByTeam, addDraftPlayer, updateDraftPlayer, deleteDraftPlayer}

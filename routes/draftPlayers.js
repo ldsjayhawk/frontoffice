@@ -20,6 +20,21 @@ router.get('/',
     })
 );
 
+router.get('/:lsTeamId', 
+    validate.checkMongoId,
+    asyncHandler(async(req, res) => {
+        const result = await draftPlayersController.getDraftPlayer(req, res);
+
+        if (!result) {
+            const error = new Error('Error retrieving player. Please try again.')
+            error.status = 500;
+            throw error;
+        }
+
+    res.status(200).json(result);
+    })
+);
+
 router.get('/:id', 
     validate.checkMongoId,
     asyncHandler(async(req, res) => {
