@@ -1,34 +1,47 @@
-<main>  
-    <div>
-    <h1><span id="draftyear"></span> Franchise GM Draft Room </h1>
-    <h3 id="otc">On the clock:<span> </span></h3>
-    </div>
-    <div class="grid">
-        <div class="listContainer">
-            <h3>Player List</h3>
-            <ul id="playerList">
-            </ul>
+<main>
+        <div class="icons">
+                <div class="flip-icon">
+                    <div class="flip-icon-inner">
+                        <div class="flip-icon-front">
+                            <figure id="teams">
+                                <img src="images/team.svg" alt="Teams icon" width="150">
+                                <figcaption id="teams-caption">Teams</figcaption>
+                            </figure>
+                        </div>
+                        <div class="flip-icon-back">
+                            <a href="teams.html"><h2>Teams</h2></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flip-icon">
+                    <div class="flip-icon-inner">
+                        <div class="flip-icon-front">
+                            <figure id="signup">
+                                <img src="images/signup.svg" alt="Sign-up icon" width="150">
+                                <figcaption>Sign-up</figcaption>
+                            </figure>
+                        </div>
+                    <div class="flip-icon-back">
+                        <a href="signup.html"><h2>Sign-up</h2></a>
+                    </div>
+                </div>
+            </div>
+
+                <div class="flip-icon">
+                    <div class="flip-icon-inner">
+                        <div class="flip-icon-front">
+                            <figure id="search">
+                                <img src="images/search.svg" alt="Search icon" width="150">
+                                <figcaption>Search</figcaption>
+                            </figure>
+                        </div>
+                    <div class="flip-icon-back">
+                        <a href="search.html"><h2>Search</h2></a>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="listContainer">
-            <h3>Team Selections</h3>
-            <label>Filter by team
-            <select name="fgm" id="fgm" class="teamChooser" required>
-            <option value="">Choose a team...</option>
-            </select></label>
-            <table id="pickTable">
-            <thead>
-                <tr>
-                    <th>Overall</th>
-                    <th>Pick</th>
-                    <th>Team</th>
-                    <th>Player</th>
-                </tr>
-            </thead>
-            <tbody id="pickTableBody"></tbody>
-        </table>
-            <ul id="pickList">
-            </ul>
-            <table></table>
-        </div>
+
     </main>
 </div>
