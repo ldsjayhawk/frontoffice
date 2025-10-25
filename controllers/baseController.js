@@ -11,4 +11,14 @@ res.render('index', {
 });
 }
 
+baseController.buildDraft = async function(req, res){
+  const nav = await utilities.getNav()
+res.render('draft/draft', {
+  title: 'Draft',
+  loggedin: false,
+  accountData: {},
+  nav
+});
+}
+
 module.exports = baseController

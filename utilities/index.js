@@ -13,7 +13,7 @@ Util.getNav = async function (req, res, next) {
     list += '<li><a href="/" title="Home page">Home</a></li>'
     list += '<li><a href="signup.html">Sign-up</a></li>'
     list += '<li><a href="teams.html">Rosters</a></li>'
-    list += '<li><a href="draft.html">Draft</a></li>'
+    list += '<li><a href="/draft">Draft</a></li>'
     // list += '<li><a href="search.html">Search</a></li>'
 
 //    data.rows.forEach((row) => {
