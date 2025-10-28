@@ -3,10 +3,16 @@
   --paragraph-font: Figtree, sans-serif;
 }
 
-.hero img {
+#header-container {
+  display: flex;
+  justify-content: center;
+}
+
+
+.hero picture {
   border: 1px solid #3f536a;
   padding: 5px;
-  display: block;
+  display: flex;
   margin: 0 auto;
   box-shadow: 0 0 50px gray;
   width: 80%;
@@ -36,7 +42,8 @@
   list-style-type: none;
   padding: 30px;
   background-color: #162435;
-  border-bottom: #e4a633 5px solid;
+  border-bottom: #5a8b39 5px solid;
+  border-right: #5a8b39 5px solid;
   margin: 0 auto;
 }
 
@@ -439,11 +446,12 @@ form {
 /*...BODY... */
 
 .grid {
-  display: grid;
+  display: flex;
   gap: 5px;
   align-items: center;
   grid-template-columns: 1fr;
   justify-content: space-evenly;
+  align-items: flex-start;
 }
 
 li{
@@ -455,6 +463,14 @@ li{
 .listContainer {
   border: solid #000 2px;
   min-height: 34rem;
+  width: 50%;
+}
+
+ul#playerList,
+ul#teamList {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }
 
 button {
@@ -468,12 +484,14 @@ button {
 /*...PLAYER LIST...*/
 
 button {
-  background-color: #5a8b39;
+  background-color: #c8d6f1;
   font-weight: 700;
-  color: #fff;
-  padding: .75rem;
-  width: 200px;
+  color: #000;
+  padding: .25rem;
+  width: 100%;
   font-size: .9em;
+  border-radius: 6px;
+  text-align: left;
 }
 
 button:hover {

@@ -20,10 +20,11 @@ router.get('/',
     })
 );
 
-router.get('/:lsTeamId', 
-    validate.checkMongoId,
+router.get('/team/:teamId', 
+    validate.teamValidationRules(), //remove upon adding authentication
+    validate.checkTeam, //remove upon adding authentication
     asyncHandler(async(req, res) => {
-        const result = await draftPlayersController.getDraftPlayer(req, res);
+        const result = await draftPlayersController.getPlayersByTeam(req, res);
 
         if (!result) {
             const error = new Error('Error retrieving player. Please try again.')
@@ -67,7 +68,7 @@ router.post('/',
 );
 
 router.put('/:id',
-    isAuthenticated,
+    //isAuthenticated,
     validate.checkMongoId,
     validate.draftPlayerValidationRules(),
     validate.checkDraftPlayer,

@@ -3,14 +3,16 @@ const ObjectId = require('mongodb').ObjectId;
 
 const getAll = async (req, res) => {
     //#swagger.tags=['draftPlayers']
-    const result = await mongodb.getDb().collection('fgm_draft_players').find();
+    teamId = null;
+    const result = await mongodb.getDb().collection('fgm_draft_players').find({fgm_team : teamId });
 
     return result.toArray();
 }
 
 const getPlayersByTeam = async (req, res) => {
-    const result = await mongodb.getDb().collection('fgm_draft_players').find(lsTeamId);
-
+    console.log(req.params)
+    const teamId = req.params.teamId;
+    const result = await mongodb.getDb().collection('fgm_draft_players').find({fgm_team : teamId });
     return result.toArray();
 }
 
@@ -44,10 +46,10 @@ const updateDraftPlayer = async (req,res) => {
 
     const draftPlayerId = new ObjectId(req.params.id);
     const draftPlayer = {
-        // firstName: req.body.firstName,
-        // lastName: req.body.lastName,
-        // position: req.body.position,
-        // rank: req.body.rank,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        position: req.body.position,
+        rank: req.body.rank,
         fgm_team: req.body.fgm_team
     };
 

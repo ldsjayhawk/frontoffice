@@ -11,6 +11,16 @@
     "http"
   ],
   "paths": {
+    "/draft": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
     "/api-docs": {
       "get": {
         "description": "",
@@ -77,6 +87,27 @@
         }
       }
     },
+    "/draftPlayers/team/{teamId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "teamId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
     "/draftPlayers/{id}": {
       "get": {
         "tags": [
@@ -118,18 +149,6 @@
             "schema": {
               "type": "object",
               "properties": {
-                "firstName": {
-                  "example": "any"
-                },
-                "lastName": {
-                  "example": "any"
-                },
-                "position": {
-                  "example": "any"
-                },
-                "rank": {
-                  "example": "any"
-                },
                 "fgm_team": {
                   "example": "any"
                 }
@@ -143,9 +162,6 @@
           },
           "400": {
             "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
           }
         }
       },

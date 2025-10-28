@@ -33,6 +33,12 @@ validate.gmValidationRules = () => {
     ]
 }
 
+validate.teamValidationRules = () => {
+    return [
+        body('fgm_team').isString().isLength({min:2, max:3}).withMessage('Team code must be 2 or 3 letters')
+    ]
+};
+
 validate.checkDraftPlayer = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -42,6 +48,14 @@ validate.checkDraftPlayer = (req, res, next) => {
 };
 
 validate.checkGm = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({errors: errors.array()});
+    }
+    return next();
+};
+
+validate.checkTeam = (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         return res.status(400).json({errors: errors.array()});

@@ -1,42 +1,33 @@
 const playerList = document.querySelector('#playerList');
 const teamList = document.querySelector('#teamList');
-const defaultTeamId = 111;
-const lsTeamId = ''; // store team id from login in local storage
+let teamId = 'KC';
+let lsTeamId; // store team id from login in local storage
 
 // Populate draft list
 try {
   const response = await fetch('/draftplayers');
   const players = await response.json();
-  console.log(players);
 
-  players.sort((a, b) => a.rank - b.rank);
+  players.sort((a, b) => a.rank - b.rank); // sort players by rank
 
-  playerList.innerHTML = '';
+  playerList.innerHTML = ''; // initialize player list
 
   // Return player list in button form
-  players.forEach((item) => {
-    console.log(item)
+  players.forEach((player) => {
     const li = document.createElement('li');
     const button = document.createElement('button');
-    button.textContent = `${item.rank} ${item.firstName} ${item.lastName}  ${item.position}`;
+    button.textContent = `${player.rank} ${player.firstName} ${player.lastName}  ${player.position}`;
     li.append(button);
     playerList.appendChild(li);
 
     button.onclick = async () => {
       const confirmSelection = confirm(
-        `You have selected ${item.firstName} ${item.lastName}. Click OK to confirm selection.`
+        `You have selected ${player.firstName} ${player.lastName}. Click OK to confirm selection.`
       );
       if (!confirmSelection) return;
 
       try {
-        // Prompt for team ID (or fallback to local storage or default)
-        let teamId = prompt('Please enter team id:') || lsTeamId || defaultTeamId;
-
-        // Optional: call getTeam(teamId) if needed
-        // const team = getTeam(teamId);
-
-        // Update database
-        const updateResponse = await fetch(`/draftplayers/${item._id}`, {
+        const updateResponse = await fetch(`/draftplayers/${player._id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ teamId }),
@@ -54,9 +45,6 @@ try {
         teamLi.textContent = `${updated.firstName} ${updated.lastName} (Team ${teamId})`;
         teamList.appendChild(teamLi);
 
-        // Disable or remove drafted player
-        button.disabled = true;
-        button.textContent = `${updated.firstName} ${updated.lastName} (Drafted)`;
       } catch (error) {
         console.error(error);
         alert('Error updating player. Please try again.');
@@ -68,34 +56,25 @@ try {
   alert('Error retrieving players. Please try again.');
 }
 
+// Populate team list
+try {
+  teamId = teamId.toUpperCase()
+  const response = await fetch(`/draftplayers/team/${teamId}`);
+  const players = await response.json();
 
+  players.sort((a, b) => a.rank - b.rank);
 
-// function getTeam(teamid) {
-//     teams.forEach(item => {
-//         if (teamid == item.id)
-//             team = item.name
-//         return team
-//     })};
+players.forEach((player) => {
+    const li = document.createElement('li');
+    li.textContent = `${player.rank} ${player.firstName} ${player.lastName}  ${player.position}`;
+    teamList.appendChild(li);
+});
 
-// const fgm = document.getElementById("fgm");
+} catch (error) {
+  console.error('Error fetching players:', error);
+  alert('Error retrieving players. Please try again.');
+}
 
-// teams.forEach(item => {
-//     const option = document.createElement('option');
-//     option.textContent = item.name;
-//     fgm.appendChild(option);
-// });
-
-
-// const teamDropdown = document.getElementById('fgm');
-// const pickTableBody = document.getElementById('pickTableBody');
-
-// // Populate dropdown options for each team
-// teams.forEach(team => {
-//     const option = document.createElement('option');
-//     option.value = team.name;
-//     option.textContent = team.name;
-//     teamDropdown.appendChild(option);
-// });
 
 // // Function to Display Filtered Results in Table
 // function displayFilteredPicks(filterTeam) {
@@ -132,9 +111,3 @@ try {
 
 // // Initial Display of All Picks
 // displayFilteredPicks(""); // Show all picks on page load
-
-// // Event Listener for Dropdown Selection
-// teamDropdown.addEventListener('change', () => {
-//     const selectedTeam = teamDropdown.value;
-//     displayFilteredPicks(selectedTeam);
-// });
