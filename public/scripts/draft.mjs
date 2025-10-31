@@ -1,49 +1,71 @@
 const playerList = document.querySelector('#playerList');
 const teamList = document.querySelector('#teamList');
-let teamId = 'KC';
-let lsTeamId; // store team id from login in local storage
+const teamSelections = document.querySelector('#teamSelections')
+// const lsTeamId = localStorage.getItem() <-- need item to get in parenthesis
+const lsTeamId = 'KC';
+
+// try
+//   const teamID = lsTeamId
+//   const updateResponse = await fetch(`/teams/${team._id}`, {
+//    teamSelections.textContent = `${lsTeamId}`
+//   }
+
 
 // Populate draft list
 try {
   const response = await fetch('/draftplayers');
   const players = await response.json();
 
-  players.sort((a, b) => a.rank - b.rank); // sort players by rank
+  players.sort((a, b) => a.rank - b.rank);
+  playerList.innerHTML = ''; // clear list
 
-  playerList.innerHTML = ''; // initialize player list
 
-  // Return player list in button form
-  players.forEach((player) => {
+  players.forEach(player => {
     const li = document.createElement('li');
     const button = document.createElement('button');
-    button.textContent = `${player.rank} ${player.firstName} ${player.lastName}  ${player.position}`;
-    li.append(button);
+
+    if (player.fgm_team) {
+      button.style.backgroundColor = '#999';
+      button.style.color = '#fff';
+      button.disabled = true;
+      button.textContent = `${player.rank} ${player.firstName} ${player.lastName} ${player.position} - Drafted by ${player.fgm_team}`;
+    } else {
+      button.textContent = `${player.rank} ${player.firstName} ${player.lastName} ${player.position}`;
+    }
+
+    li.appendChild(button);
     playerList.appendChild(li);
 
+    // save fgm team in db when drafted
     button.onclick = async () => {
+      const fgm_team = lsTeamId.toUpperCase()
       const confirmSelection = confirm(
         `You have selected ${player.firstName} ${player.lastName}. Click OK to confirm selection.`
       );
       if (!confirmSelection) return;
 
       try {
-        const updateResponse = await fetch(`/draftplayers/${player._id}`, {
+        const updateResponse = await fetch(`/draftplayers/${player._id}/team`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ teamId }),
+          body: JSON.stringify({ fgm_team }),
         });
 
+      console.log('Updated result:', updateResponse);
         if (!updateResponse.ok) {
-          throw new Error('Failed to add player to team');
+          throw new Error(`Failed to add player`);
         }
 
-        const updated = await updateResponse.json();
-        console.log(`${updated.firstName} ${updated.lastName} added to team ${teamId}`);
 
-        // Update UI
-        const teamLi = document.createElement('li');
-        teamLi.textContent = `${updated.firstName} ${updated.lastName} (Team ${teamId})`;
-        teamList.appendChild(teamLi);
+
+        // // Update UI
+        // button.textContent = `${updated.rank} ${updated.firstName} ${updated.lastName} ${updated.position} - Drafted by ${updated.fgm_team}`;
+        // button.style.backgroundColor = '#999';
+        // button.style.color = '#fff';
+
+        // const teamLi = document.createElement('li');
+        // teamLi.textContent = `${updated.firstName} ${updated.lastName} (Team ${lsTeamId})`;
+        // teamList.appendChild(teamLi);
 
       } catch (error) {
         console.error(error);
@@ -51,6 +73,7 @@ try {
       }
     };
   });
+
 } catch (error) {
   console.error('Error fetching players:', error);
   alert('Error retrieving players. Please try again.');
@@ -58,22 +81,23 @@ try {
 
 // Populate team list
 try {
-  teamId = teamId.toUpperCase()
-  const response = await fetch(`/draftplayers/team/${teamId}`);
-  const players = await response.json();
+  const response = await fetch(`/draftplayers/team/${lsTeamId}`);
+  const teamPlayers = await response.json();
 
-  players.sort((a, b) => a.rank - b.rank);
+  teamPlayers.sort((a, b) => a.rank - b.rank);
+  teamList.innerHTML = ''; // clear previous list
 
-players.forEach((player) => {
+  teamPlayers.forEach(player => {
     const li = document.createElement('li');
-    li.textContent = `${player.rank} ${player.firstName} ${player.lastName}  ${player.position}`;
+    li.textContent = `${player.rank} ${player.firstName} ${player.lastName} ${player.position}`;
     teamList.appendChild(li);
-});
+  });
 
 } catch (error) {
-  console.error('Error fetching players:', error);
+  console.error('Error fetching team players:', error);
   alert('Error retrieving players. Please try again.');
 }
+
 
 
 // // Function to Display Filtered Results in Table
