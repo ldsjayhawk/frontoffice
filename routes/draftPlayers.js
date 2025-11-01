@@ -21,8 +21,8 @@ router.get('/',
 );
 
 router.get('/team/:teamId', 
-    validate.teamValidationRules(), //remove upon adding authentication
-    validate.checkTeam, //remove upon adding authentication
+    // validate.teamValidationRules(), //remove upon adding authentication
+    // validate.checkTeam, //remove upon adding authentication
     asyncHandler(async(req, res) => {
         const result = await draftPlayersController.getPlayersByTeam(req, res);
 
@@ -67,23 +67,10 @@ router.post('/',
     })
 );
 
-router.put('/:id',
+router.put('/:id/team',
     //isAuthenticated,
-    validate.checkMongoId,
-    validate.draftPlayerValidationRules(),
-    validate.checkDraftPlayer,
-    asyncHandler(async(req, res) => {
-        const result = await draftPlayersController.updateDraftPlayer(req, res);
+    asyncHandler(draftPlayersController.updateDraftPlayer));
 
-        if (result < 1) {
-            const error = new Error('Error occurred while updating player.  Please try again.')
-            error.status = 500;
-            throw error;
-        }
-
-        res.status(204).json('Player updated');   
-    })
-)
 
 router.delete('/:id',
     isAuthenticated,
