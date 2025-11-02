@@ -18,6 +18,7 @@ const errorHandler = require('./utilities/errorHandler');
 const swaggerRouter = require('./routes/swagger');
 const utilities = require('./utilities')
 const baseController = require('./controllers/baseController');
+const gmsRouter = require('./routes/gms.js')
 const port = process.env.PORT || 3000;
 
 //----------------
@@ -123,6 +124,7 @@ app.get("/", utilities.handleErrors(baseController.buildHome))  // how do I hand
 // app.use("/account", accountRoute)
 
 app.use('/', require('./routes'));
+app.use('/gms', gmsRouter);
 app.use(errorHandler);
 app.use('/api-docs', swaggerRouter);
 

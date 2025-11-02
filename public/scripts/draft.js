@@ -1,14 +1,10 @@
 const playerList = document.querySelector('#playerList');
 const teamList = document.querySelector('#teamList');
-const teamSelections = document.querySelector('#teamSelections')
-// const lsTeamId = localStorage.getItem() <-- need item to get in parenthesis
-const lsTeamId = 'KC';
+const otc = document.querySelector('#otc');
+let lsPickTime;
+let lsTeamId;
+let teamId;
 
-// try
-//   const teamID = lsTeamId
-//   const updateResponse = await fetch(`/teams/${team._id}`, {
-//    teamSelections.textContent = `${lsTeamId}`
-//   }
 
 getPlayerList();
 getTeamList();
@@ -41,7 +37,11 @@ async function getPlayerList() {
 
       // save fgm team in db when drafted
       button.onclick = async () => {
-        const fgm_team = lsTeamId.toUpperCase()
+        const pickTime = Date.now()
+        localStorage.setItem('lsPickTime', pickTime)
+        const fgm_team = await checkUser();
+        localStorage.setItem('lsTeamId', fgm_team)
+        console.log(`fgm team: ${fgm_team}`)
         const confirmSelection = confirm(
           `You have selected ${player.firstName} ${player.lastName}. Click OK to confirm selection.`
         );
@@ -78,7 +78,8 @@ async function getPlayerList() {
 // Populate team list
 async function getTeamList() {
   try {
-    const response = await fetch(`/draftplayers/team/${lsTeamId}`);
+    const teamId = localStorage.getItem('lsTeamId')
+    const response = await fetch(`/draftplayers/team/${teamId}`);
     const teamPlayers = await response.json();
 
     teamPlayers.sort((a, b) => a.rank - b.rank);
@@ -94,4 +95,44 @@ async function getTeamList() {
     console.error('Error fetching team players:', error);
     alert('Error retrieving players. Please try again.');
   }
+}
+
+  async function checkUser() {
+      let user = prompt('Enter your ProFSL profile id:')
+      console.log(user)
+      if (!user) return null
+
+      try{
+          const response = await fetch(`/gms/${user}`);
+      
+
+          if (!response.ok) {
+              throw new Error(`User not found ${response.status}`);
+          }
+          
+          const gm = await response.json();
+          console.log(`teamCode: ${gm.teamCode}`)
+          return gm.teamCode
+
+      } catch (error) {
+          console.error('Error getting user', error)
+          return null
+      }
+  }
+
+  
+const otcTime = localStorage.getItem('lsPickTime');
+if (otcTime) {
+  const otcDate = new Date(Number(otcTime)); // convert string to number
+  const options = {  
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric', 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true};
+  const formattedOtcDate = otcDate.toLocaleDateString(undefined, options);
+  otc.textContent = `Last pick made at ${formattedOtcDate}`;
+} else {
+  otc.textContent = "No pick made yet";
 }

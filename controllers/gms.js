@@ -9,15 +9,31 @@ const getAllGms = async (req, res) => {
 
 }
 
-const getGm = async (req, res) => {
+const getGmTeam = async (req, res) => {
     //#swagger.tags=['gms']
-    const gmId = new ObjectId(req.params.id)
-    const result = await mongodb.getDb().collection('fgm_gms').findOne({_id: gmId});
+    try {
+        const { gmNumber } = req.params
+        const gm = Number(gmNumber)
+        const result = await mongodb
+            .getDb()
+            .collection('fgm_gms')
+            .findOne(
+                {gmNumber: gm},
+                {projection: {teamCode: 1, _id: 0}}
+            )
 
-    console.log(result)
+        if (!result) {
+            return res.status(404).json({message: 'User not found'})
+        }
+        console.log(result)
+        return res.status(200).json(result);
+    
+    } catch (error) {
+        console.error('Error returning GM', error);
+        res.status(500).json({message: 'Server error'});
+    }
+}
 
-    return result;
-};
 
 const addGm = async (req,res) => {
     //#swagger.tags=['gms']
@@ -67,4 +83,4 @@ const deleteGm = async (req,res) => {
     return response.deletedCount
 }
 
-module.exports = { getAllGms, getGm, addGm, updateGm, deleteGm }
+module.exports = { getAllGms, getGmTeam, addGm, updateGm, deleteGm }

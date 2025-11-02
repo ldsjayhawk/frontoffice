@@ -1,10 +1,12 @@
-const express = require('express');
+const express = require('express')
 const router = express.Router();
 
 const validate = require('../utilities/validation')
 const asyncHandler = require('../utilities/asyncHandler');
 const gmsController = require('../controllers/gms')
 const { isAuthenticated } = require('../utilities/authenticate');
+
+const { User } = require('../models/user.js')
 
 router.get('/',
     asyncHandler(async(req, res) => {
@@ -20,24 +22,10 @@ router.get('/',
     })
 );
 
-router.get('/:id', 
-    validate.checkMongoId,
-    asyncHandler(async(req, res) => {
-        const result = await gmsController.getGm(req, res);
-        console.log(result)
-
-        if (!result) {
-            const error = new Error('Error retrieving GMs. Please try again.')
-            error.status = 500;
-            throw error;
-        }
-
-    res.status(200).json(result);
-    })
-);
+router.get('/:gmNumber', gmsController.getGmTeam);
 
 router.post('/', 
-    isAuthenticated,
+    // isAuthenticated,
     validate.gmValidationRules(),
     validate.checkGm,
     asyncHandler(async(req, res) => {
@@ -54,7 +42,7 @@ router.post('/',
 );
 
 router.put('/:id',
-    isAuthenticated,
+    // isAuthenticated,
     validate.checkMongoId,
     validate.gmValidationRules(),
     validate.checkGm,
