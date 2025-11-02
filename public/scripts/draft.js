@@ -5,9 +5,12 @@ let lsPickTime;
 let lsTeamId;
 let teamId;
 
+const fgm_team = await checkUser();
+localStorage.setItem('lsTeamId', fgm_team)
 
 getPlayerList();
 getTeamList();
+
 
 // Populate draft list
 async function getPlayerList() {
@@ -39,8 +42,6 @@ async function getPlayerList() {
       button.onclick = async () => {
         const pickTime = Date.now()
         localStorage.setItem('lsPickTime', pickTime)
-        const fgm_team = await checkUser();
-        localStorage.setItem('lsTeamId', fgm_team)
         console.log(`fgm team: ${fgm_team}`)
         const confirmSelection = confirm(
           `You have selected ${player.firstName} ${player.lastName}. Click OK to confirm selection.`
