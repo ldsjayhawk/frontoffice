@@ -1,139 +1,134 @@
+import getTeamList from './teamList.js';
+import getLastPick from './lastPick.js';
+
+
 const playerList = document.querySelector('#playerList');
 const teamList = document.querySelector('#teamList');
 const otc = document.querySelector('#otc');
-let lsPickTime;
-let lsTeamId;
-let teamId;
-
-const fgm_team = await checkUser();
-localStorage.setItem('lsTeamId', fgm_team)
-
-getPlayerList();
-getTeamList();
-
+let fgm_team = null;
 
 // Populate draft list
 async function getPlayerList() {
   try {
+    // Retrieve player list for the draft
     const response = await fetch('/draftplayers');
+    if (!response.ok) throw new Error(`Failed to fetch players: ${response.status}`);
+
     const players = await response.json();
 
+    // Sort players by rank
     players.sort((a, b) => a.rank - b.rank);
-    playerList.innerHTML = ''; // clear list
 
+    const playerList = document.querySelector('#playerList');
+    if (!playerList) {
+      console.error('No #playerList element found.');
+      return;
+    }
 
+    playerList.innerHTML = ''; // Clear previous list
+
+    // Loop through players and create buttons
     players.forEach(player => {
       const li = document.createElement('li');
       const button = document.createElement('button');
 
       if (player.fgm_team) {
+        // Player already drafted — disable button
         button.style.backgroundColor = '#999';
         button.style.color = '#fff';
         button.disabled = true;
         button.textContent = `${player.rank} ${player.firstName} ${player.lastName} ${player.position} - Drafted by ${player.fgm_team}`;
       } else {
+        // Player available — make selectable button
         button.textContent = `${player.rank} ${player.firstName} ${player.lastName} ${player.position}`;
+        button.classList.add('draft-button');
+        button.dataset.id = player._id;
+        button.dataset.firstName = player.firstName;
+        button.dataset.lastName = player.lastName;
       }
 
       li.appendChild(button);
       playerList.appendChild(li);
-
-      // save fgm team in db when drafted
-      button.onclick = async () => {
-        const pickTime = Date.now()
-        localStorage.setItem('lsPickTime', pickTime)
-        console.log(`fgm team: ${fgm_team}`)
-        const confirmSelection = confirm(
-          `You have selected ${player.firstName} ${player.lastName}. Click OK to confirm selection.`
-        );
-        if (!confirmSelection) return;
-
-        try {
-          const updateResponse = await fetch(`/draftplayers/${player._id}/team`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fgm_team }),
-          });
-
-        console.log('Updated result:', updateResponse);
-          if (!updateResponse.ok) {
-            throw new Error(`Failed to add player`);
-          }
-
-        getPlayerList();
-        getTeamList();
-
-      } catch (error) {
-        console.error(error);
-        alert('Error updating player. Please try again.');
-      }
-    };
-  });
-
-} catch (error) {
-  console.error('Error fetching players:', error);
-  alert('Error retrieving players. Please try again.');
-}
-}
-
-// Populate team list
-async function getTeamList() {
-  try {
-    const teamId = localStorage.getItem('lsTeamId')
-    const response = await fetch(`/draftplayers/team/${teamId}`);
-    const teamPlayers = await response.json();
-
-    teamPlayers.sort((a, b) => a.rank - b.rank);
-    teamList.innerHTML = ''; // clear previous list
-
-    teamPlayers.forEach(player => {
-      const li = document.createElement('li');
-      li.textContent = `${player.rank} ${player.firstName} ${player.lastName} ${player.position}`;
-      teamList.appendChild(li);
     });
 
   } catch (error) {
-    console.error('Error fetching team players:', error);
-    alert('Error retrieving players. Please try again.');
+    console.error('Error loading players:', error);
   }
 }
 
-  async function checkUser() {
-      let user = prompt('Enter your ProFSL profile id:')
-      console.log(user)
-      if (!user) return null
 
-      try{
-          const response = await fetch(`/gms/${user}`);
-      
+async function handleDraftButtonClick(event){
+  // save team and draft date/time in db when drafted
+  if (!event.target.classList.contains('draft-button')) return;
 
-          if (!response.ok) {
-              throw new Error(`User not found ${response.status}`);
-          }
-          
-          const gm = await response.json();
-          console.log(`teamCode: ${gm.teamCode}`)
-          return gm.teamCode
+  const button = event.target;
+  // dataset property set earlier is `id` (button.dataset.id = player._id)
+  // reading the wrong property (`_id`) caused `playerId` to be undefined
+  // which resulted in a request like `/draftplayers/undefined/team` and
+  // Mongo's ObjectId constructor throwing a BSONError.
+  const playerId = button.dataset.id || button.dataset._id;
+  const firstName = button.dataset.firstName;
+  const lastName = button.dataset.lastName;
+  const pickTime = new Date();
 
-      } catch (error) {
-          console.error('Error getting user', error)
-          return null
-      }
+  console.log(`fgm team: ${fgm_team}`)
+  const confirmSelection = confirm(
+    `You have selected ${firstName} ${lastName}. Click OK to confirm selection.`
+  );
+  if (!confirmSelection) return;
+
+  try {
+    const updateResponse = await fetch(`/draftplayers/${playerId}/team`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ fgm_team, pickTime }),
+    });
+
+    if (!updateResponse.ok) throw new Error(`Failed to add player`);
+
+    await getPlayerList();
+    if (fgm_team) {
+      await getTeamList(fgm_team);
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert('Error updating player. Please try again.');
+  }
+};
+
+document.addEventListener('DOMContentLoaded', async () => {
+  getLastPick();
+  fgm_team = await checkUser();
+
+  await getPlayerList();
+  if (fgm_team) {
+    await getTeamList(fgm_team);
   }
 
+  playerList.addEventListener('click', handleDraftButtonClick);
+
+});
+
+async function checkUser() {
+  let user = prompt('Enter your ProFSL profile #:')
+  console.log(user)
+  if (!user) return null
+
+  try{
+      const response = await fetch(`/gms/${user}`);
   
-const otcTime = localStorage.getItem('lsPickTime');
-if (otcTime) {
-  const otcDate = new Date(Number(otcTime)); // convert string to number
-  const options = {  
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric', 
-      hour: 'numeric', 
-      minute: '2-digit',
-      hour12: true};
-  const formattedOtcDate = otcDate.toLocaleDateString(undefined, options);
-  otc.textContent = `Last pick made at ${formattedOtcDate}`;
-} else {
-  otc.textContent = "No pick made yet";
+
+      if (!response.ok) {
+          throw new Error(`User not found ${response.status}`);
+      }
+      
+      const gm = await response.json();
+      console.log(`teamCode: ${gm.teamCode}`)
+      return gm.teamCode
+
+  } catch (error) {
+      console.error('Error getting user', error)
+      return null
+  }
 }

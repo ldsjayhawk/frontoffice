@@ -36,6 +36,14 @@ router.get('/team/:teamId',
     })
 );
 
+    router.get('/last-pick', 
+        asyncHandler(async(req, res) => {
+            const result = await draftPlayersController.getLastPick(req, res);
+
+            res.status(200).json(result);
+        })
+    );
+
 router.get('/:id', 
     validate.checkMongoId,
     asyncHandler(async(req, res) => {

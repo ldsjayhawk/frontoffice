@@ -25,7 +25,7 @@ const port = process.env.PORT || 3000;
 // Middleware
 //----------------
 
-    // app.get("/favicon.ico", (req, res) => res.status(204).end());
+    app.get("/favicon.ico", (req, res) => res.status(204).end());
 
 app.use(express.json());
 

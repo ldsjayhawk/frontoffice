@@ -20,6 +20,12 @@ validate.draftPlayerValidationRules = () => {
     ]
 };
 
+validate.checkGmNumber = () => {
+    return [
+        body('gmNumber').isNumeric().isInt({min:1, max:100000}).withMessage('Please provide your GM Profile id #')
+    ]
+}
+
 validate.gmValidationRules = () => {
     return [
         body('gmName').isString().notEmpty().isLength({min:2, max:30}).withMessage('GM Name must be between 2 and 30 letters'),

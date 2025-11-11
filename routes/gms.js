@@ -22,7 +22,13 @@ router.get('/',
     })
 );
 
-router.get('/:gmNumber', gmsController.getGmTeam);
+router.get('/:gmNumber',
+    validate.checkGmNumber(),
+    asyncHandler(async(req, res) => {
+        await gmsController.getGmTeam(req, res);
+    })
+)
+    
 
 router.post('/', 
     // isAuthenticated,

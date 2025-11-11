@@ -21,6 +21,20 @@ const getDraftPlayer = async (req, res) => {
     return result;
 };
 
+const getLastPick = async (req, res) => {
+    //#swagger.tags=['draftPlayers']
+    try {
+        const result = await mongodb.getDb().collection('fgm_draft_players').findOne(
+            { fgm_team: { $exists: true, $ne: null }, pickTime: { $exists: true, $ne: null } },
+            { sort: { pickTime: -1 } }
+        );
+        return result;
+    } catch (error) {
+        console.error('Error getting last pick:', error);
+        return null;
+    }
+}
+
 const addDraftPlayer = async (req,res) => {
     //#swagger.tags=['draftPlayers']
     const rank = req.body.rank ? Number(req.body.rank):undefined;
@@ -40,24 +54,41 @@ const addDraftPlayer = async (req,res) => {
 
 const updateDraftPlayer = async (req, res) => {
   //#swagger.tags=['draftPlayers']
-  // try {
-    const id = new ObjectId(req.params.id);
-    const {fgm_team} = req.body;
-    console.log('Body received:', req.body);
+  try {
+        const idParam = req.params.id;
 
+        // Validate the id before creating an ObjectId to avoid BSONError
+        if (!ObjectId.isValid(idParam)) {
+            return res.status(400).json({ message: 'Invalid id' });
+        }
 
-    const result = await mongodb.getDb().collection('fgm_draft_players').findOneAndUpdate(
-        { _id: id },
-        { $set: { fgm_team } },
-        { returnDocument: 'after' }
-    );
+        const id = new ObjectId(idParam);
+        const { fgm_team, pickTime } = req.body;
+        console.log('Body received:', req.body);
 
-    console.log('Mongo result:', result.fgm_team);
-    if (result.fgm_team === null) {
-        return res.status(500).json({ message: 'Failed to update player' });
-        
-    } else { res.status(200).json(result.value)}; // send the updated player}
-};
+        // Use updateOne for a clear update result, then fetch the updated document.
+        const updateResult = await mongodb.getDb().collection('fgm_draft_players').updateOne(
+            { _id: id },
+            { $set: { fgm_team, pickTime } }
+        );
+
+        console.log('Update result:', updateResult);
+
+        if (!updateResult || updateResult.matchedCount === 0) {
+            // No document matched the filter
+            return res.status(404).json({ message: 'Player not found' });
+        }
+
+        // Get the updated document to return
+        const updatedDoc = await mongodb.getDb().collection('fgm_draft_players').findOne({ _id: id });
+
+        return res.status(200).json(updatedDoc);
+
+  } catch (error) {
+    console.error('Error updating player:', error);
+    res.status(500).json({message: 'Server error'});
+  }
+}
 
 
 const deleteDraftPlayer = async (req,res) => {
@@ -68,4 +99,4 @@ const deleteDraftPlayer = async (req,res) => {
     return response.deletedCount
 }
 
-module.exports = {getAll, getDraftPlayer, getPlayersByTeam, addDraftPlayer, updateDraftPlayer, deleteDraftPlayer}
+    module.exports = {getAll, getDraftPlayer, getPlayersByTeam, getLastPick, addDraftPlayer, updateDraftPlayer, deleteDraftPlayer}
