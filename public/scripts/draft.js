@@ -54,6 +54,7 @@ async function getPlayerList() {
   } catch (error) {
     console.error('Error loading players:', error);
   }
+  getLastPick();
 }
 
 
