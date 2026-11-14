@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+        <main>
+            <% Object.values(rosters.rosters).forEach((team) => { %> 
+            <h1>    
+                <%= team.teamName %>
+            </h1>
+            <h2>
+                GM: Test Dummy
+            </h2>
+            <h2>
+                <%= `$${team.salaryCap}m`%>
+            </h2>
+
+            <table class="rosterTable">
+                <tr>
+                    <th>Fantrax ID</th>
+                    <th>Name</th>
+                    <th>Position</th>
+                    <th>Contract</th>
+                    <th>Salary</th>
+                    <th>Roster Status</th>
+                    <th></th>
+                    <th></th>
+                </tr>
+                <% team.rosterItems.forEach((item) => { %> 
+                    <tr>
+                        <td><%= item.id %></td>
+                        <td></td>
+                        <td><%= item.position %></td>
+                        <td><%= item.contract.name %></td>
+                        <td><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.salary) %></td>
+                        <td><%= item.status %></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <% }); %>
+                </table>
+            <% }); %>
+
+
+        </main>
+
+
+    </div>
+</body>
+</html>
