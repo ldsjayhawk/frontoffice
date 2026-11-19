@@ -123,6 +123,11 @@ app.get("/", utilities.handleErrors(baseController.buildHome))  // how do I hand
 // Account route
 // app.use("/account", accountRoute)
 
+app.use((req, res, next) => {
+    console.log("Incoming request:", req.method, req.originalUrl);
+    next();
+});
+
 app.use('/', require('./routes'));
 app.use('/gms', gmsRouter);
 app.use(errorHandler);

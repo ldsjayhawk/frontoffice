@@ -13,30 +13,46 @@
             <h2>
                 <%= `$${team.salaryCap}m`%>
             </h2>
-
+            <h3>MLB Roster</h3>
             <table class="rosterTable">
                 <tr>
                     <th>Fantrax ID</th>
                     <th>Name</th>
                     <th>Position</th>
                     <th>Contract</th>
-                    <th>Salary</th>
+                    <th>2026</th>
                     <th>Roster Status</th>
                     <th></th>
                     <th></th>
                 </tr>
                 <% team.rosterItems.forEach((item) => { %> 
-                    <tr>
-                        <td><%= item.id %></td>
-                        <td></td>
-                        <td><%= item.position %></td>
-                        <td><%= item.contract.name %></td>
-                        <td><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.salary) %></td>
-                        <td><%= item.status %></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <% }); %>
+                    <% if (item.status.toLowerCase() !== 'minors') { %>
+                        <tr>
+                            <td><%= item.id %></td>
+                            <!-- <td></td> -->
+                            <% const player = players[item.id]; %>
+                            <td><%= player?.name || 'Unknown Player' %></td>
+                            <td><%= item.position %></td>
+                            <td><%= item.contract.name %></td>
+                            <td><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.salary) %></td>
+                            <td><%= item.status %></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    <% } else { %>
+                        <tr>
+                            <td><%= item.id %></td>
+                            <!-- <td></td> -->
+                            <!-- <% const player = players[item.id]; %> -->
+                            <td><%= player?.name || 'Unknown Player' %></td>
+                            <td><%= item.position %></td>
+                            <td><%= item.contract.name %></td>
+                            <td><%= new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(item.salary) %></td>
+                            <td><%= item.status %></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    <% }}); %>
                 </table>
             <% }); %>
 

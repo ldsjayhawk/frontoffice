@@ -9,10 +9,8 @@ const baseController = require('../controllers/baseController')
 const rostersRouter = require('./rosters')
 
 
-
-
 // router.use('/');
-router.use('/', swaggerRouter);
+// router.use('/', swaggerRouter);
 router.get("/draft",baseController.buildDraft);
 router.use('/draftPlayers', draftPlayersRouter);
 router.use('/gms', gmsRouter);

@@ -3,6 +3,7 @@ const router = express.Router();
 const rosterController = require('../controllers/rosters')
 
 router.get('/', rosterController.getAllRosters);
+router.get('/teamRoster', rosterController.getTeamRoster);
 // router.get('/:teamcode', rosterController.getRoster);
 
 // router.post('/', rosterController.addTeam)
