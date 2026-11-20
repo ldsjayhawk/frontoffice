@@ -45,6 +45,7 @@ const getTeamRoster = async(req, res) => {
     console.log("getTeamRoster controller reached");
     const teamResponse = await fetch(rosterUrl,options);
     const playerResponse = await fetch(playerUrl,options);
+    const positionOrder = ['C', 'CI', 'MI', 'OF', 'SP', 'RP'];
     
     if (teamResponse.ok && playerResponse.ok) {
         const teamData = await teamResponse.json();
@@ -55,11 +56,22 @@ const getTeamRoster = async(req, res) => {
         const team = teamData.rosters[teamId]
         let nav = await utilities.getNav()
         
-        const mlbPlayers = team.rosterItems.toLowerCase().filter("active" || "reserve");
+        const mlbPlayers = team.rosterItems.filter(item => item.status.toLowerCase() === "active" || item.status.toLowerCase() === "reserve");
+        const minorPlayers =  team.rosterItems.filter(item => item.status.toLowerCase() === "minors");
+        console.log(mlbPlayers)
+        console.log(minorPlayers)
+
+        mlbPlayers.sort((a,b) => positionOrder.indexOf(a.position) - positionOrder.indexOf(b.position));
+        minorPlayers.sort((a,b) => positionOrder.indexOf(a.position) - positionOrder.indexOf(b.position));
+
+
+        // users.sort((a, b) => a.age - b.age);
 
         res.render('rosters/teamRoster', { 
             team:team, 
             players:playerData,
+            mlbPlayers:mlbPlayers,
+            minorPlayers:minorPlayers,
             loggedin: false,
             accountData: {},
             nav,
